@@ -5,7 +5,7 @@ import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, Heart } from 'lucide-react';
 import { content } from './content';
 
-const pageNames = ['capa', 'carta', 'minha gatinha comunista', 'fotografia', 'fragmentos', 'final'];
+const pageNames = ['capa', 'carta', 'minha gatinha comunista', 'fotografia', 'fragmentos', 'final', 'recorte secreto'];
 const publicBasePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/+$/, '');
 
 function publicAsset(path: string) {
@@ -219,7 +219,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <p className="letter-signoff">{content.letterSignoff}<br /><em>{content.myName || '[SEU NOME]'}</em></p>
+              <p className="letter-signoff">{content.letterSignoff}<br /><em>{content.myName || '[SEU NOME]'}</em>.</p>
             </article>
             <Postmark className="letter-postmark" />
           </div>
@@ -299,14 +299,46 @@ export default function Home() {
           </div>
         )}
 
+        {pageIndex === 6 && (
+          <div className="secret-art">
+            <article className="secret-poster" aria-label="Recorte secreto do álbum">
+              <span className="secret-tape" aria-hidden="true" />
+              <header className="secret-heading">
+                <span className="secret-kicker">um recorte guardado entre as páginas</span>
+                <h1><span>LULA</span><em>PRESIDENTE</em></h1>
+              </header>
+              <figure className="secret-photo">
+                <img src={publicAsset('/ephemera/lula-portrait.webp')} alt="Retrato em preto e branco de Luiz Inácio Lula da Silva" />
+                <figcaption>Ricardo Stuckert / PR · retrato em preto e branco</figcaption>
+              </figure>
+              <div className="secret-numberpiece" aria-hidden="true">
+                <span className="secret-number">13</span>
+                <span className="secret-star"><RedStar /></span>
+                <small>edição especial</small>
+              </div>
+              <div className="secret-newspaper">
+                <span>Correio de Nós</span>
+                <p>um pedacinho de jornal que encontrou lugar no nosso álbum</p>
+                <i>nº 13 · recorte de estimação</i>
+              </div>
+            </article>
+          </div>
+        )}
+
         <nav className="leaf-navigation" aria-label="Virar as páginas do álbum">
           {pageIndex > 0 ? (
             <button className="leaf-turn leaf-turn--back" onClick={() => turnTo(pageIndex - 1)} aria-label="Voltar uma página">
               <ArrowLeft size={16} strokeWidth={1.5} /><span>folha anterior</span>
             </button>
           ) : <span className="nav-blank" />}
-          <span className="leaf-counter">{String(pageIndex + 1).padStart(2, '0')} <i>de</i> {String(pageNames.length).padStart(2, '0')}</span>
-          {pageIndex < pageNames.length - 1 ? (
+          {pageIndex >= 5 ? (
+            <button className="leaf-secret-entry" onClick={() => turnTo(6)} aria-label={pageIndex === 6 ? 'Reabrir o recorte secreto' : 'Virar para o recorte secreto'}>
+              <RedStar />
+            </button>
+          ) : (
+            <span className="leaf-counter">{String(pageIndex + 1).padStart(2, '0')} <i>de</i> {String(pageNames.length).padStart(2, '0')}</span>
+          )}
+          {pageIndex < 5 ? (
             <button className="leaf-turn leaf-turn--next" onClick={() => turnTo(pageIndex + 1)} aria-label="Virar para a próxima página">
               <span>virar a folha</span><ArrowRight size={16} strokeWidth={1.5} />
             </button>
